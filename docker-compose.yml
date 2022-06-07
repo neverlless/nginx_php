@@ -22,6 +22,7 @@ services:
     image: nginx:1.20
     container_name: webserver
     restart: unless-stopped
+    tty: true
     ports:
       - "8080:80"
 #      - "8443:443"
@@ -29,6 +30,7 @@ services:
       - ./public/:/var/www/public/
       - ./nginx/conf.d/:/etc/nginx/conf.d/
       - ./log/nginx:/var/log/nginx
+    command: sh -c "nginx; while true; do (cat /var/log/nginx/access.log | awk '{ print $$1}' | sort | uniq -c | sort -nr | head -n 10) >> /dev/stdout; clear; sleep 5; done"
     networks:
       - app-network
 
